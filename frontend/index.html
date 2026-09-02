@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlphaCode OS - NextGen Dashboard Pro</title>
+  <style>
+    /* ==========================================================================
+       1. SISTEMA DE DESIGN & VARIÁVEIS (DARK FUTURISTIC / GLOW)
+       ========================================================================== */
+    :root {
+      --bg-body: #09090b;
+      --bg-card: #121215;
+      --bg-card-hover: #1a1a1e;
+      --bg-sidebar: #0d0d10;
+      --bg-input: #18181c;
+      
+      --accent: #ff5500;
+      --accent-hover: #ff6a1a;
+      --accent-glow: rgba(255, 85, 0, 0.25);
+      
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dark: #71717a;
+      
+      --border: #27272a;
+      --border-accent: rgba(255, 85, 0, 0.4);
+      
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --purple: #8b5cf6;
+
+      --radius: 12px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ==========================================================================
+       2. TELA DE LOGIN
+       ========================================================================== */
+    .auth-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: radial-gradient(circle at top right, rgba(255, 85, 0, 0.12), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(18, 18, 21, 0.8), #09090b);
+      padding: 20px;
+    }
+
+    .auth-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--accent-glow);
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+
+    .auth-box::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      border-radius: 16px 16px 0 0;
+    }
+
+    .auth-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .auth-brand .logo-icon {
+      width: 50px; height: 50px;
+      background: rgba(255, 85, 0, 0.15);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 12px;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .auth-brand h2 { font-size: 1.6rem; font-weight: 700; }
+    .auth-brand p { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
+
+    .login-error-msg {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ==========================================================================
+       3. ESTRUTURA DO DASHBOARD
+       ========================================================================== */
+    .app-wrapper { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 270px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 24px 16px; flex-shrink: 0;
+    }
+
+    .brand-logo {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 12px 24px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-logo .badge-logo {
+      width: 36px; height: 36px;
+      background: var(--accent); color: #fff;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .brand-logo span { font-size: 1.2rem; font-weight: 700; }
+
+    .nav-menu { list-style: none; margin-top: 24px; }
+    .nav-item { margin-bottom: 6px; }
+
+    .nav-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; color: var(--text-muted);
+      text-decoration: none; border-radius: var(--radius);
+      font-size: 0.92rem; font-weight: 500;
+      transition: var(--transition); cursor: pointer;
+    }
+
+    .nav-link:hover { background-color: var(--bg-card-hover); color: var(--text-main); }
+
+    .nav-item.active .nav-link {
+      background: linear-gradient(90deg, rgba(255, 85, 0, 0.15), transparent);
+      color: var(--accent); border-left: 3px solid var(--accent); font-weight: 600;
+    }
+
+    .user-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 12px 16px; border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .user-profile-info { display: flex; align-items: center; gap: 10px; }
+
+    .avatar-circle {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), #ff9900);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; color: #fff;
+      text-transform: uppercase;
+    }
+
+    .main-area {
+      flex-grow: 1; padding: 32px 40px;
+      overflow-y: auto; max-height: 100vh;
+    }
+
+    .top-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .top-header h1 { font-size: 1.8rem; font-weight: 700; }
+    .top-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
+
+    /* ==========================================================================
+       4. CARDS & STATS
+       ========================================================================== */
+    .grid-stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px; margin-bottom: 32px;
+    }
+
+    .card-stat {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px;
+      position: relative; overflow: hidden; transition: var(--transition);
+    }
+
+    .card-stat:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-header {
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--text-muted); font-size: 0.85rem; font-weight: 500;
+    }
+
+    .stat-icon-wrapper {
+      width: 38px; height: 38px; border-radius: 8px;
+      background: rgba(255, 85, 0, 0.1); color: var(--accent);
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    }
+
+    .stat-value {
+      font-size: 1.8rem; font-weight: 700; margin: 12px 0 6px 0;
+      color: var(--text-main);
+    }
+
+    .stat-trend {
+      font-size: 0.78rem; display: inline-flex; align-items: center;
+      gap: 4px; padding: 2px 8px; border-radius: 20px; font-weight: 600;
+    }
+
+    .trend-up { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .trend-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .trend-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    .trend-purple { background: rgba(139, 92, 246, 0.15); color: var(--purple); }
+
+    /* Chart Section */
+    .chart-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; margin-bottom: 32px;
+    }
+
+    .chart-box-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+    }
+
+    .svg-chart { width: 100%; height: 160px; }
+
+    /* ==========================================================================
+       5. TABELAS E AÇÕES
+       ========================================================================== */
+    .table-wrapper {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+
+    .custom-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+
+    .custom-table th {
+      background: #0e0e11; padding: 16px 20px;
+      color: var(--text-muted); font-weight: 600; font-size: 0.8rem;
+      text-transform: uppercase; border-bottom: 1px solid var(--border);
+    }
+
+    .custom-table td { padding: 16px 20px; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; }
+    .custom-table tbody tr:hover { background-color: var(--bg-card-hover); }
+
+    .badge-pill {
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 600; display: inline-block;
+    }
+
+    .badge-active { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-dev { background: rgba(255, 85, 0, 0.15); color: var(--accent); border: 1px solid rgba(255, 85, 0, 0.3); }
+    .badge-admin { background: rgba(139, 92, 246, 0.15); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+    .badge-support { background: rgba(59, 130, 246, 0.15); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.3); }
+
+    .pwd-display {
+      font-family: monospace;
+      background: var(--bg-input);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: #f4f4f5;
+      letter-spacing: 0.5px;
+    }
+
+    .progress-bar {
+      height: 6px; background: var(--bg-input);
+      border-radius: 3px; overflow: hidden; width: 80px;
+      display: inline-block; vertical-align: middle; margin-right: 8px;
+    }
+
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+
+    .table-actions { display: flex; gap: 6px; }
+
+    /* ==========================================================================
+       6. ANOTAÇÕES GRID
+       ========================================================================== */
+    .notes-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+    }
+
+    .card-note {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; position: relative;
+      transition: var(--transition); display: flex; flex-direction: column; justify-content: space-between;
+    }
+
+    .card-note.pinned { border-color: var(--accent); box-shadow: 0 0 15px rgba(255, 85, 0, 0.15); }
+    .card-note-title { font-size: 1.05rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+    .card-note-body { color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; white-space: pre-line; margin-bottom: 16px; }
+
+    /* ==========================================================================
+       7. FORMULÁRIOS & MODAIS
+       ========================================================================== */
+    .form-group { margin-bottom: 18px; }
+
+    .form-group label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;
+    }
+
+    .form-control {
+      width: 100%; padding: 12px 16px;
+      background-color: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text-main); font-size: 0.92rem; outline: none;
+    }
+
+    .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 22px; border-radius: var(--radius); font-weight: 600; font-size: 0.9rem;
+      cursor: pointer; border: none; transition: var(--transition);
+    }
+
+    .btn-primary { background-color: var(--accent); color: #fff; box-shadow: 0 4px 14px var(--accent-glow); }
+    .btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
+
+    .btn-secondary { background-color: var(--bg-input); color: var(--text-main); border: 1px solid var(--border); }
+    .btn-secondary:hover { background-color: var(--bg-card-hover); }
+
+    .btn-block { width: 100%; }
+
+    .btn-icon {
+      background: transparent; border: none; color: var(--text-muted);
+      cursor: pointer; padding: 6px; border-radius: 6px; transition: var(--transition);
+    }
+
+    .btn-icon:hover { color: var(--text-main); background: var(--bg-input); }
+    .btn-icon-danger:hover { color: var(--danger); background: rgba(239, 68, 68, 0.15); }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; z-index: 999;
+    }
+
+    .modal-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; width: 100%; max-width: 480px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8); overflow: hidden;
+    }
+
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { padding: 24px; }
+    .modal-footer { padding: 16px 24px; background: #0d0d10; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. TELA DE LOGIN -->
+  <div id="authScreen" class="auth-wrapper">
+    <div class="auth-box">
+      <div class="auth-brand">
+        <div class="logo-icon">⚡</div>
+        <h2>AlphaCode OS</h2>
+        <p>Digite suas credenciais para acessar o painel</p>
+      </div>
+      
+      <div id="loginError" class="login-error-msg hidden">
+        <span>⚠️</span> <span id="loginErrorText">E-mail ou senha incorretos!</span>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label>E-mail Corporativo</label>
+          <input type="email" id="loginEmail" class="form-control" required value="admin@alphacode.com">
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="loginPassword" class="form-control" required value="123456">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Acessar Workspace 🚀</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. LAYOUT DASHBOARD -->
+  <div id="appLayout" class="app-wrapper hidden">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-logo">
+          <div class="badge-logo">⚡</div>
+          <span>AlphaCode</span>
+
+      </div>
+        <ul class="nav-menu">
+          <li class="nav-item active" data-view="view-dashboard">
+            <a class="nav-link"><i class="ph ph-chart-bar"></i> Dashboard</a>
+          </li>
+          <li class="nav-item" data-view="view-clientes">
+            <a class="nav-link"><i class="ph ph-users"></i> Clientes</a>
+          </li>
+          <li class="nav-item" data-view="view-projetos">
+            <a class="nav-link"><i class="ph ph-rocket-launch"></i> Projetos Ativos</a>
+          </li>
+          <li class="nav-item" data-view="view-pagamentos">
+            <a class="nav-link"><i class="ph ph-credit-card"></i> Pagamentos</a>
+          </li>
+          <li class="nav-item" data-view="view-anotacoes">
+            <a class="nav-link"><i class="ph ph-note-pencil"></i> Anotações</a>
+          </li>
+          <li class="nav-item" data-view="view-usuarios">
+            <a class="nav-link"><i class="ph ph-user-gear"></i> Gestão de Usuários</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="user-card">
+  <div class="user-profile-info">
+    <div class="avatar-circle" id="loggedUserAvatar">AD</div>
+    <div>
+      <div style="font-weight: 600; font-size: 0.85rem;" id="loggedUserName">Admin Developer</div>
+      <div style="font-size: 0.72rem; color: var(--text-dark);" id="loggedUserRole">Administrador</div>
+    </div>
+  </div>
+  <button id="btnLogout" class="btn-icon" title="Sair do Sistema"><i class="ph ph-sign-out"></i></button>
+</div>
+    </aside>
+
+    <!-- Área Principal -->
+    <main class="main-area">
+
+      <!-- VIEW 1: DASHBOARD -->
+      <section id="view-dashboard" class="view-section">
+        <div class="top-header">
+          <div>
+            <h1>Visão Geral do Negócio</h1>
+            <p>Métricas recalculadas em tempo real com base nos seus dados</p>
+          </div>
+        </div>
+
+        <div class="grid-stats">
+          <div class="card-stat">
+            <div class="stat-header">
+              <span>RECEITA REALIZADA (PAGA)</span>
+              <div class="stat-icon-wrapper"><i class="ph ph-currency-dollar"></i></div>
+            </div>
+            <div class="stat-value" id="statReceita">R$ 0,00</div>
+            <span class="stat-trend trend-up">● Somatório de Receitas Pagas</span>
+          </div>
+
+          <div class="card-stat">
+            <div class="stat-header">
+              <span>CLIENTES ATIVOS</span>
+              <div class="stat-icon-wrapper"><i class="ph ph-users"></i></div>
+            </div>
+            <div class="stat-value" id="statClientes">0</div>
+            <span class="stat-trend trend-up">● Clientes com status "Ativo"</span>
+          </div>
+
+          <div class="card-stat">
+            <div class="stat-header">
+              <span>PROJETOS EM ANDAMENTO</span>
+              <div class="stat-icon-wrapper"><i class="ph ph-rocket-launch"></i></div>
+            </div>
+            <div class="stat-value" id="statProjetos">0</div>
+            <span class="stat-trend trend-up">● Não concluídos</span>
+          </div>
+
+         <div class="card-stat">
+  <div class="stat-header">
+    <span>USUÁRIOS COM ACESSO</span>
+    <div class="stat-icon-wrapper" style="color: var(--purple); background: rgba(139, 92, 246, 0.1);"><i class="ph ph-user"></i></div>
+  </div>
+  <div class="stat-value" id="statUsersCount" style="color: var(--text-main);">0</div>
+  <span class="stat-trend trend-purple">● Usuários cadastrados</span>
+</div>
+</div>
+
+        <div class="chart-box">
+          <div class="chart-box-header">
+            <h3>Crescimento e Projeção</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Tempo Real</span>
+          </div>
+          <svg class="svg-chart" viewBox="0 0 500 150">
+            <defs>
+              <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ff5500" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#ff5500" stop-opacity="0.0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,130 Q80,40 160,80 T320,30 T500,60 L500,150 L0,150 Z" fill="url(#grad)" />
+            <path d="M0,130 Q80,40 160,80 T320,30 T500,60" fill="none" stroke="#ff5500" stroke-width="3" />
+            <circle cx="320" cy="30" r="5" fill="#ff5500" />
+          </svg>
+        </div>
+      </section>
+
+      <!-- VIEW 2: CLIENTES -->
+      <section id="view-clientes" class="view-section hidden">
+        <div class="top-header">
+          <div>
+            <h1>Gerenciamento de Clientes</h1>
+            <p>Cadastre, edite e acompanhe os seus clientes</p>
+          </div>
+          <button id="btnOpenClientModal" class="btn btn-primary">+ Novo Cliente</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Cliente / Empresa</th>
+                <th>E-mail</th>
+                <th>Plano</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTableBody">
+              <!-- Gerado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 3: PROJETOS -->
+      <section id="view-projetos" class="view-section hidden">
+        <div class="top-header">
+          <div>
+            <h1>Projetos em Execução</h1>
+            <p>Gerencie entregas, prazos e progresso dos projetos</p>
+          </div>
+          <button id="btnOpenProjectModal" class="btn btn-primary">+ Novo Projeto</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Nome do Projeto</th>
+                <th>Cliente</th>
+                <th>Progresso</th>
+                <th>Fase Atual</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="projectsTableBody">
+              <!-- Gerado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 4: PAGAMENTOS -->
+      <section id="view-pagamentos" class="view-section hidden">
+        <div class="top-header">
+          <div>
+            <h1>Gestão de Pagamentos e Fluxo de Caixa</h1>
+            <p>Controle de cobranças, despesas e faturas em aberto</p>
+          </div>
+          <button id="btnOpenPaymentModal" class="btn btn-primary">+ Novo Pagamento</button>
+        </div>
+
+        <!-- Cards resumo financeiro -->
+<div class="grid-stats">
+  <div class="card-stat">
+    <div class="stat-header">
+      <span>TOTAL RECEBIDO (PAGO)</span>
+      <div class="stat-icon-wrapper" style="color: var(--success); background: rgba(16, 185, 129, 0.1);"><i class="ph ph-check-circle"></i></div>
+    </div>
+    <div class="stat-value" id="statPaidTotal" style="color: var(--success);">R$ 0,00</div>
+    <span class="stat-trend trend-up">● Entradas confirmadas</span>
+  </div>
+
+  <div class="card-stat">
+    <div class="stat-header">
+      <span>A RECEBER (PENDENTE)</span>
+      <div class="stat-icon-wrapper" style="color: var(--warning); background: rgba(245, 158, 11, 0.1);"><i class="ph ph-clock"></i></div>
+    </div>
+    <div class="stat-value" id="statPendingTotal" style="color: var(--warning);">R$ 0,00</div>
+    <span class="stat-trend trend-warning">● Aguardando pagamento</span>
+  </div>
+
+  <div class="card-stat">
+    <div class="stat-header">
+      <span>EM ATRASO / COBRANÇA</span>
+      <div class="stat-icon-wrapper" style="color: var(--danger); background: rgba(239, 68, 68, 0.1);"><i class="ph ph-warning-circle"></i></div>
+    </div>
+    <div class="stat-value" id="statOverdueTotal" style="color: var(--danger);">R$ 0,00</div>
+    <span class="stat-trend trend-danger">● Vencidos necessitando ação</span>
+  </div>
+</div>
+        <div class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Descrição / Título</th>
+                <th>Tipo</th>
+                <th>Cliente / Origem</th>
+                <th>Valor</th>
+                <th>Vencimento</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+              <!-- Gerado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 5: ANOTAÇÕES -->
+      <section id="view-anotacoes" class="view-section hidden">
+        <div class="top-header">
+          <div>
+            <h1>Bloco de Anotações</h1>
+            <p>Guarde lembretes e ideias de forma rápida</p>
+          </div>
+          <button id="btnOpenNoteModal" class="btn btn-primary">+ Criar Anotação</button>
+        </div>
+
+        <div id="notesGrid" class="notes-grid">
+          <!-- Gerado dinamicamente -->
+        </div>
+      </section>
+
+      <!-- VIEW 6: GESTÃO DE USUÁRIOS (NOVO) -->
+      <section id="view-usuarios" class="view-section hidden">
+        <div class="top-header">
+          <div>
+            <h1>Gestão de Usuários & Logins</h1>
+            <p>Crie novas contas, controle e altere e-mails e senhas de acesso</p>
+          </div>
+          <button id="btnOpenUserModal" class="btn btn-primary">+ Novo Usuário</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail (Login)</th>
+                <th>Senha</th>
+                <th>Perfil / Cargo</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <!-- Gerado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL CLIENTE -->
+  <div id="clientModal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="clientModalTitle">Novo Cliente</h3>
+        <button id="btnCloseClientModal" class="btn-icon">✖</button>
+      </div>
+      <form id="clientForm">
+        <input type="hidden" id="clientIdInput">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nome do Cliente / Empresa</label>
+            <input type="text" id="clientNameInput" class="form-control" required placeholder="Ex: TechCorp Ltda">
+          </div>
+          <div class="form-group">
+            <label>E-mail de Contato</label>
+            <input type="email" id="clientEmailInput" class="form-control" required placeholder="contato@empresa.com">
+          </div>
+          <div class="form-group">
+            <label>Plano Contratado</label>
+            <input type="text" id="clientPlanInput" class="form-control" required placeholder="Ex: Enterprise / Pro / Starter">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="clientStatusSelect" class="form-control">
+              <option value="Ativo">Ativo</option>
+              <option value="Em Renovação">Em Renovação</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btnCancelClient" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PROJETO -->
+  <div id="projectModal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="projectModalTitle">Novo Projeto</h3>
+        <button id="btnCloseProjectModal" class="btn-icon">✖</button>
+      </div>
+      <form id="projectForm">
+        <input type="hidden" id="projectIdInput">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nome do Projeto</label>
+            <input type="text" id="projectNameInput" class="form-control" required placeholder="Ex: App Mobile iOS/Android">
+          </div>
+          <div class="form-group">
+            <label>Cliente Associado</label>
+            <select id="projectClientSelect" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label>Progresso (%)</label>
+            <input type="number" min="0" max="100" id="projectProgressInput" class="form-control" required placeholder="0 a 100">
+          </div>
+          <div class="form-group">
+            <label>Fase Atual</label>
+            <select id="projectStatusSelect" class="form-control">
+              <option value="Desenvolvimento">Desenvolvimento</option>
+              <option value="Design / UX">Design / UX</option>
+              <option value="Testes / QA">Testes / QA</option>
+              <option value="Concluído">Concluído</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btnCancelProject" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Projeto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PAGAMENTO -->
+  <div id="paymentModal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="paymentModalTitle">Novo Pagamento</h3>
+        <button id="btnClosePaymentModal" class="btn-icon">✖</button>
+      </div>
+      <form id="paymentForm">
+        <input type="hidden" id="paymentIdInput">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Descrição</label>
+            <input type="text" id="paymentTitleInput" class="form-control" required placeholder="Ex: Mensalidade ERP - Setembro">
+          </div>
+          <div class="form-group">
+            <label>Tipo de Lançamento</label>
+            <select id="paymentTypeSelect" class="form-control">
+              <option value="Receita">Receita (Entrada)</option>
+              <option value="Despesa">Despesa (Saída)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Cliente / Pagador</label>
+            <select id="paymentClientSelect" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label>Valor (R$)</label>
+            <input type="number" step="0.01" id="paymentValInput" class="form-control" required placeholder="Ex: 1500.00">
+          </div>
+          <div class="form-group">
+            <label>Data de Vencimento</label>
+            <input type="date" id="paymentDueDateInput" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="paymentStatusSelect" class="form-control">
+              <option value="Pago">Pago</option>
+              <option value="Pendente">Pendente</option>
+              <option value="Atrasado">Atrasado</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btnCancelPayment" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Lançamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL ANOTAÇÕES -->
+  <div id="noteModal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Nova Anotação</h3>
+        <button id="btnCloseNoteModal" class="btn-icon">✖</button>
+      </div>
+      <form id="noteForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" id="noteTitleInput" class="form-control" placeholder="Ex: Reunião de escopo" required>
+          </div>
+          <div class="form-group">
+            <label>Conteúdo</label>
+            <textarea id="noteContentInput" class="form-control" rows="4" placeholder="Detalhes do lembrete..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btnCancelNote" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Anotação</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL USUÁRIO (NOVO) -->
+  <div id="userModal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="userModalTitle">Novo Usuário</h3>
+        <button id="btnCloseUserModal" class="btn-icon">✖</button>
+      </div>
+      <form id="userForm">
+        <input type="hidden" id="userIdInput">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nome Completo</label>
+            <input type="text" id="userNameInput" class="form-control" required placeholder="Ex: Carlos Silva">
+          </div>
+          <div class="form-group">
+            <label>E-mail (Login de Acesso)</label>
+            <input type="email" id="userEmailInput" class="form-control" required placeholder="carlos@alphacode.com">
+          </div>
+          <div class="form-group">
+            <label>Senha de Acesso</label>
+            <input type="text" id="userPasswordInput" class="form-control" required placeholder="Digite a senha desejada">
+          </div>
+          <div class="form-group">
+            <label>Perfil / Cargo</label>
+            <select id="userRoleSelect" class="form-control">
+              <option value="Administrador">Administrador</option>
+              <option value="Operador">Operador</option>
+              <option value="Suporte">Suporte</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status da Conta</label>
+            <select id="userStatusSelect" class="form-control">
+              <option value="Ativo">Ativo</option>
+              <option value="Inativo">Inativo (Acesso Bloqueado)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btnCancelUser" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Usuário</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT COMPLETO -->
+  <script>
+    // ESTADO INICIAL DOS DADOS
+    let users = JSON.parse(localStorage.getItem('alpha_users')) || [
+      { id: "u1", name: "Admin Developer", email: "admin@alphacode.com", password: "123456", role: "Administrador", status: "Ativo" },
+      { id: "u2", name: "Suporte Técnico", email: "suporte@alphacode.com", password: "654321", role: "Suporte", status: "Ativo" }
+    ];
+
+    let clients = JSON.parse(localStorage.getItem('alpha_clients')) || [
+      { id: "c1", name: "TechCorp Ltda", email: "contato@techcorp.com", plan: "Enterprise", status: "Ativo" },
+      { id: "c2", name: "DevStudio Digital", email: "carlos@devstudio.com", plan: "Pro Annual", status: "Em Renovação" },
+      { id: "c3", name: "Alpha Inovações", email: "suporte@alphainova.com", plan: "Starter", status: "Ativo" }
+    ];
+
+    let projects = JSON.parse(localStorage.getItem('alpha_projects')) || [
+      { id: "p1", name: "Sistema ERP SaaS Cloud", client: "TechCorp Ltda", progress: 80, status: "Desenvolvimento" },
+      { id: "p2", name: "Aplicativo Mobile iOS/Android", client: "DevStudio Digital", progress: 45, status: "Design / UX" }
+    ];
+
+    let payments = JSON.parse(localStorage.getItem('alpha_payments')) || [
+      { id: "pay1", title: "Fatura Setembro ERP SaaS", type: "Receita", client: "TechCorp Ltda", val: 12500, dueDate: "2026-09-10", status: "Pago" },
+      { id: "pay2", title: "Manutenção Anual App Mobile", type: "Receita", client: "DevStudio Digital", val: 4500, dueDate: "2026-09-25", status: "Pendente" },
+      { id: "pay3", title: "Licença Servidor AWS Cloud", type: "Despesa", client: "Alpha Inovações", val: 1200, dueDate: "2026-08-30", status: "Atrasado" }
+    ];
+
+    let notes = JSON.parse(localStorage.getItem('alpha_notes')) || [
+      {
+        id: "n1",
+        title: "⚡ Gestão de Usuários Ativada",
+        content: "Agora é possível criar, editar e ver e-mail/senha de todos os usuários no painel de Gestão de Usuários!",
+        pinned: true,
+        date: new Date().toLocaleDateString('pt-BR')
+      }
+    ];
+
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initLogin();
+      initNav();
+      
+      initUsers();
+      initClients();
+      initProjects();
+      initPayments();
+      initNotes();
+
+      refreshAll();
+    });
+
+    function refreshAll() {
+      renderUsers();
+      renderClients();
+      renderProjects();
+      renderPayments();
+      renderNotes();
+      updateDashboardStats();
+    }
+
+    // 1. LOGIN DINÂMICO
+    function initLogin() {
+      const loginForm = document.getElementById('loginForm');
+      const loginError = document.getElementById('loginError');
+      const loginErrorText = document.getElementById('loginErrorText');
+
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const passwordInput = document.getElementById('loginPassword').value.trim();
+
+        // Buscar usuário cadastrado no array
+        const foundUser = users.find(u => u.email.toLowerCase() === emailInput && u.password === passwordInput);
+
+        if (!foundUser) {
+          loginErrorText.innerText = "E-mail ou senha incorretos!";
+          loginError.classList.remove('hidden');
+          return;
+        }
+
+        if (foundUser.status !== 'Ativo') {
+          loginErrorText.innerText = "Sua conta está inativa! Fale com o Administrador.";
+          loginError.classList.remove('hidden');
+          return;
+        }
+
+        // Sucesso no Login
+        loginError.classList.add('hidden');
+        currentUser = foundUser;
+
+        // Atualiza perfil no canto inferior da sidebar
+        document.getElementById('loggedUserName').innerText = currentUser.name;
+        document.getElementById('loggedUserRole').innerText = currentUser.role;
+        
+        // Iniciais para Avatar
+        const initials = currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        document.getElementById('loggedUserAvatar').innerText = initials || 'US';
+
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appLayout').classList.remove('hidden');
+      });
+
+      document.getElementById('btnLogout').addEventListener('click', () => {
+        currentUser = null;
+        document.getElementById('appLayout').classList.add('hidden');
+        document.getElementById('authScreen').classList.remove('hidden');
+      });
+    }
+
+    // 2. DASHBOARD STATS
+    function updateDashboardStats() {
+      const receitaTotalPaga = payments
+        .filter(p => p.type === 'Receita' && p.status === 'Pago')
+        .reduce((sum, p) => sum + Number(p.val || 0), 0);
+
+      const clientesAtivos = clients.filter(c => c.status === 'Ativo').length;
+      const projetosEmAndamento = projects.filter(p => p.status !== 'Concluído').length;
+
+      document.getElementById('statReceita').innerText = receitaTotalPaga.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('statClientes').innerText = clientesAtivos;
+      document.getElementById('statProjetos').innerText = projetosEmAndamento;
+      document.getElementById('statUsersCount').innerText = users.length;
+
+      // Cards da aba Pagamentos
+      const paidTotal = payments.filter(p => p.status === 'Pago' && p.type === 'Receita').reduce((sum, p) => sum + Number(p.val || 0), 0);
+      const pendingTotal = payments.filter(p => p.status === 'Pendente').reduce((sum, p) => sum + Number(p.val || 0), 0);
+      const overdueTotal = payments.filter(p => p.status === 'Atrasado').reduce((sum, p) => sum + Number(p.val || 0), 0);
+
+      document.getElementById('statPaidTotal').innerText = paidTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('statPendingTotal').innerText = pendingTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('statOverdueTotal').innerText = overdueTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // 3. GESTÃO DE USUÁRIOS (NOVO CRUD)
+    function renderUsers() {
+      const tbody = document.getElementById('usersTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = users.map(u => {
+        const badgeRole = u.role === 'Administrador' ? 'badge-admin' : u.role === 'Suporte' ? 'badge-support' : 'badge-dev';
+        const badgeStatus = u.status === 'Ativo' ? 'badge-active' : 'badge-danger';
+
+        return `
+          <tr>
+            <td><strong>${escapeHtml(u.name)}</strong></td>
+            <td><code>${escapeHtml(u.email)}</code></td>
+            <td><span class="pwd-display">🔑 ${escapeHtml(u.password)}</span></td>
+            <td><span class="badge-pill ${badgeRole}">${escapeHtml(u.role)}</span></td>
+            <td><span class="badge-pill ${badgeStatus}">${escapeHtml(u.status)}</span></td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-icon" onclick="editUser('${u.id}')" title="Editar Usuário">✏️</button>
+                <button class="btn-icon btn-icon-danger" onclick="deleteUser('${u.id}')" title="Excluir Usuário">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function initUsers() {
+      const modal = document.getElementById('userModal');
+      const form = document.getElementById('userForm');
+
+      document.getElementById('btnOpenUserModal').addEventListener('click', () => {
+        document.getElementById('userModalTitle').innerText = "Novo Usuário";
+        form.reset();
+        document.getElementById('userIdInput').value = "";
+        modal.classList.remove('hidden');
+      });
+
+      const closeModal = () => modal.classList.add('hidden');
+      document.getElementById('btnCloseUserModal').addEventListener('click', closeModal);
+      document.getElementById('btnCancelUser').addEventListener('click', closeModal);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('userIdInput').value;
+        const name = document.getElementById('userNameInput').value.trim();
+        const email = document.getElementById('userEmailInput').value.trim();
+        const password = document.getElementById('userPasswordInput').value.trim();
+        const role = document.getElementById('userRoleSelect').value;
+        const status = document.getElementById('userStatusSelect').value;
+
+        // Verificar duplicidade de email
+        const existingEmail = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.id !== id);
+        if (existingEmail) {
+          alert('Já existe um usuário cadastrado com este e-mail!');
+          return;
+        }
+
+        if (id) {
+          users = users.map(u => u.id === id ? { id, name, email, password, role, status } : u);
+        } else {
+          users.push({ id: Date.now().toString(), name, email, password, role, status });
+        }
+
+        localStorage.setItem('alpha_users', JSON.stringify(users));
+        closeModal();
+        refreshAll();
+      });
+    }
+
+    window.editUser = function(id) {
+      const u = users.find(item => item.id === id);
+      if (!u) return;
+
+      document.getElementById('userModalTitle').innerText = "Editar Usuário";
+      document.getElementById('userIdInput').value = u.id;
+      document.getElementById('userNameInput').value = u.name;
+      document.getElementById('userEmailInput').value = u.email;
+      document.getElementById('userPasswordInput').value = u.password;
+      document.getElementById('userRoleSelect').value = u.role;
+      document.getElementById('userStatusSelect').value = u.status;
+
+      document.getElementById('userModal').classList.remove('hidden');
+    };
+
+    window.deleteUser = function(id) {
+      if (currentUser && currentUser.id === id) {
+        alert('Você não pode excluir a sua própria conta enquanto estiver logado nela!');
+        return;
+      }
+
+      if (confirm('Deseja realmente apagar esta conta de usuário?')) {
+        users = users.filter(u => u.id !== id);
+        localStorage.setItem('alpha_users', JSON.stringify(users));
+        refreshAll();
+      }
+    };
+
+    // 4. CLIENTES (CRUD)
+    function renderClients() {
+      const tbody = document.getElementById('clientsTableBody');
+      tbody.innerHTML = clients.map(c => `
+        <tr>
+          <td><strong>${escapeHtml(c.name)}</strong></td>
+          <td>${escapeHtml(c.email)}</td>
+          <td>${escapeHtml(c.plan)}</td>
+          <td>
+            <span class="badge-pill ${c.status === 'Ativo' ? 'badge-active' : c.status === 'Em Renovação' ? 'badge-pending' : ''}">
+              ${c.status}
+            </span>
+          </td>
+          <td>
+            <div class="table-actions">
+              <button class="btn-icon" onclick="editClient('${c.id}')" title="Editar">✏️</button>
+              <button class="btn-icon btn-icon-danger" onclick="deleteClient('${c.id}')" title="Excluir">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function initClients() {
+      const modal = document.getElementById('clientModal');
+      const form = document.getElementById('clientForm');
+
+      document.getElementById('btnOpenClientModal').addEventListener('click', () => {
+        document.getElementById('clientModalTitle').innerText = "Novo Cliente";
+        form.reset();
+        document.getElementById('clientIdInput').value = "";
+        modal.classList.remove('hidden');
+      });
+
+      const closeModal = () => modal.classList.add('hidden');
+      document.getElementById('btnCloseClientModal').addEventListener('click', closeModal);
+      document.getElementById('btnCancelClient').addEventListener('click', closeModal);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('clientIdInput').value;
+        const name = document.getElementById('clientNameInput').value.trim();
+        const email = document.getElementById('clientEmailInput').value.trim();
+        const plan = document.getElementById('clientPlanInput').value.trim();
+        const status = document.getElementById('clientStatusSelect').value;
+
+        if (id) {
+          clients = clients.map(c => c.id === id ? { id, name, email, plan, status } : c);
+        } else {
+          clients.push({ id: Date.now().toString(), name, email, plan, status });
+        }
+
+        localStorage.setItem('alpha_clients', JSON.stringify(clients));
+        closeModal();
+        refreshAll();
+      });
+    }
+
+    window.editClient = function(id) {
+      const c = clients.find(item => item.id === id);
+      if (!c) return;
+
+      document.getElementById('clientModalTitle').innerText = "Editar Cliente";
+      document.getElementById('clientIdInput').value = c.id;
+      document.getElementById('clientNameInput').value = c.name;
+      document.getElementById('clientEmailInput').value = c.email;
+      document.getElementById('clientPlanInput').value = c.plan;
+      document.getElementById('clientStatusSelect').value = c.status;
+
+      document.getElementById('clientModal').classList.remove('hidden');
+    };
+
+    window.deleteClient = function(id) {
+      if (confirm('Deseja realmente excluir este cliente?')) {
+        clients = clients.filter(c => c.id !== id);
+        localStorage.setItem('alpha_clients', JSON.stringify(clients));
+        refreshAll();
+      }
+    };
+
+    // 5. PROJETOS (CRUD)
+    function renderProjects() {
+      const tbody = document.getElementById('projectsTableBody');
+      tbody.innerHTML = projects.map(p => `
+        <tr>
+          <td><strong>${escapeHtml(p.name)}</strong></td>
+          <td>${escapeHtml(p.client)}</td>
+          <td>
+            <div class="progress-bar"><div class="progress-fill" style="width: ${p.progress}%;"></div></div> ${p.progress}%
+          </td>
+          <td><span class="badge-pill badge-dev">${escapeHtml(p.status)}</span></td>
+          <td>
+            <div class="table-actions">
+              <button class="btn-icon" onclick="editProject('${p.id}')" title="Editar">✏️</button>
+              <button class="btn-icon btn-icon-danger" onclick="deleteProject('${p.id}')" title="Excluir">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function initProjects() {
+      const modal = document.getElementById('projectModal');
+      const form = document.getElementById('projectForm');
+      const clientSelect = document.getElementById('projectClientSelect');
+
+      document.getElementById('btnOpenProjectModal').addEventListener('click', () => {
+        document.getElementById('projectModalTitle').innerText = "Novo Projeto";
+        form.reset();
+        document.getElementById('projectIdInput').value = "";
+        clientSelect.innerHTML = clients.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+        modal.classList.remove('hidden');
+      });
+
+      const closeModal = () => modal.classList.add('hidden');
+      document.getElementById('btnCloseProjectModal').addEventListener('click', closeModal);
+      document.getElementById('btnCancelProject').addEventListener('click', closeModal);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('projectIdInput').value;
+        const name = document.getElementById('projectNameInput').value.trim();
+        const client = clientSelect.value;
+        const progress = parseInt(document.getElementById('projectProgressInput').value) || 0;
+        const status = document.getElementById('projectStatusSelect').value;
+
+        if (id) {
+          projects = projects.map(p => p.id === id ? { id, name, client, progress, status } : p);
+        } else {
+          projects.push({ id: Date.now().toString(), name, client, progress, status });
+        }
+
+        localStorage.setItem('alpha_projects', JSON.stringify(projects));
+        closeModal();
+        refreshAll();
+      });
+    }
+
+    window.editProject = function(id) {
+      const p = projects.find(item => item.id === id);
+      if (!p) return;
+
+      const clientSelect = document.getElementById('projectClientSelect');
+      clientSelect.innerHTML = clients.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+
+      document.getElementById('projectModalTitle').innerText = "Editar Projeto";
+      document.getElementById('projectIdInput').value = p.id;
+      document.getElementById('projectNameInput').value = p.name;
+      clientSelect.value = p.client;
+      document.getElementById('projectProgressInput').value = p.progress;
+      document.getElementById('projectStatusSelect').value = p.status;
+
+      document.getElementById('projectModal').classList.remove('hidden');
+    };
+
+    window.deleteProject = function(id) {
+      if (confirm('Deseja apagar este projeto?')) {
+        projects = projects.filter(p => p.id !== id);
+        localStorage.setItem('alpha_projects', JSON.stringify(projects));
+        refreshAll();
+      }
+    };
+
+    // 6. PAGAMENTOS (CRUD)
+    function renderPayments() {
+      const tbody = document.getElementById('paymentsTableBody');
+      tbody.innerHTML = payments.map(p => {
+        const dateFormatted = p.dueDate ? new Date(p.dueDate + "T00:00:00").toLocaleDateString('pt-BR') : '-';
+        const badgeClass = p.status === 'Pago' ? 'badge-active' : p.status === 'Pendente' ? 'badge-pending' : 'badge-danger';
+        const typeColor = p.type === 'Receita' ? 'var(--success)' : 'var(--danger)';
+
+        return `
+          <tr>
+            <td><strong>${escapeHtml(p.title)}</strong></td>
+            <td><span style="color: ${typeColor}; font-weight: 600;">${escapeHtml(p.type)}</span></td>
+            <td>${escapeHtml(p.client)}</td>
+            <td><strong>${Number(p.val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong></td>
+            <td>${dateFormatted}</td>
+            <td><span class="badge-pill ${badgeClass}">${p.status}</span></td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-icon" onclick="editPayment('${p.id}')" title="Editar">✏️</button>
+                <button class="btn-icon btn-icon-danger" onclick="deletePayment('${p.id}')" title="Excluir">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function initPayments() {
+      const modal = document.getElementById('paymentModal');
+      const form = document.getElementById('paymentForm');
+      const clientSelect = document.getElementById('paymentClientSelect');
+
+      document.getElementById('btnOpenPaymentModal').addEventListener('click', () => {
+        document.getElementById('paymentModalTitle').innerText = "Novo Pagamento";
+        form.reset();
+        document.getElementById('paymentIdInput').value = "";
+        clientSelect.innerHTML = clients.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+        modal.classList.remove('hidden');
+      });
+
+      const closeModal = () => modal.classList.add('hidden');
+      document.getElementById('btnClosePaymentModal').addEventListener('click', closeModal);
+      document.getElementById('btnCancelPayment').addEventListener('click', closeModal);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('paymentIdInput').value;
+        const title = document.getElementById('paymentTitleInput').value.trim();
+        const type = document.getElementById('paymentTypeSelect').value;
+        const client = clientSelect.value;
+        const val = parseFloat(document.getElementById('paymentValInput').value) || 0;
+        const dueDate = document.getElementById('paymentDueDateInput').value;
+        const status = document.getElementById('paymentStatusSelect').value;
+
+        if (id) {
+          payments = payments.map(p => p.id === id ? { id, title, type, client, val, dueDate, status } : p);
+        } else {
+          payments.push({ id: Date.now().toString(), title, type, client, val, dueDate, status });
+        }
+
+        localStorage.setItem('alpha_payments', JSON.stringify(payments));
+        closeModal();
+        refreshAll();
+      });
+    }
+
+    window.editPayment = function(id) {
+      const p = payments.find(item => item.id === id);
+      if (!p) return;
+
+      const clientSelect = document.getElementById('paymentClientSelect');
+      clientSelect.innerHTML = clients.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join('');
+
+      document.getElementById('paymentModalTitle').innerText = "Editar Pagamento";
+      document.getElementById('paymentIdInput').value = p.id;
+      document.getElementById('paymentTitleInput').value = p.title;
+      document.getElementById('paymentTypeSelect').value = p.type;
+      clientSelect.value = p.client;
+      document.getElementById('paymentValInput').value = p.val;
+      document.getElementById('paymentDueDateInput').value = p.dueDate;
+      document.getElementById('paymentStatusSelect').value = p.status;
+
+      document.getElementById('paymentModal').classList.remove('hidden');
+    };
+
+    window.deletePayment = function(id) {
+      if (confirm('Deseja realmente apagar este lançamento financeiro?')) {
+        payments = payments.filter(p => p.id !== id);
+        localStorage.setItem('alpha_payments', JSON.stringify(payments));
+        refreshAll();
+      }
+    };
+
+    // 7. ANOTAÇÕES (CRUD)
+    function renderNotes() {
+      const grid = document.getElementById('notesGrid');
+      if (!grid) return;
+
+      const sorted = [...notes].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+      grid.innerHTML = sorted.map(note => `
+        <div class="card-note ${note.pinned ? 'pinned' : ''}">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div class="card-note-title">${escapeHtml(note.title)}</div>
+              <div style="display: flex; gap: 2px;">
+                <button class="btn-icon" onclick="togglePin('${note.id}')" title="Fixar">📌</button>
+                <button class="btn-icon btn-icon-danger" onclick="deleteNote('${note.id}')" title="Excluir">🗑️</button>
+              </div>
+            </div>
+            <div class="card-note-body">${escapeHtml(note.content)}</div>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-dark); border-top: 1px solid var(--border); padding-top: 10px;">
+            ${note.date}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function initNotes() {
+      const modal = document.getElementById('noteModal');
+      const form = document.getElementById('noteForm');
+
+      document.getElementById('btnOpenNoteModal').addEventListener('click', () => modal.classList.remove('hidden'));
+      const closeModal = () => { modal.classList.add('hidden'); form.reset(); };
+      
+      document.getElementById('btnCloseNoteModal').addEventListener('click', closeModal);
+      document.getElementById('btnCancelNote').addEventListener('click', closeModal);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('noteTitleInput').value.trim();
+        const content = document.getElementById('noteContentInput').value.trim();
+
+        if (title && content) {
+          notes.unshift({
+            id: Date.now().toString(),
+            title, content, pinned: false,
+            date: new Date().toLocaleDateString('pt-BR')
+          });
+          localStorage.setItem('alpha_notes', JSON.stringify(notes));
+          closeModal();
+          refreshAll();
+        }
+      });
+    }
+
+    window.togglePin = function(id) {
+      notes = notes.map(n => n.id === id ? { ...n, pinned: !n.pinned } : n);
+      localStorage.setItem('alpha_notes', JSON.stringify(notes));
+      refreshAll();
+    };
+
+    window.deleteNote = function(id) {
+      if (confirm('Deseja excluir esta anotação?')) {
+        notes = notes.filter(n => n.id !== id);
+        localStorage.setItem('alpha_notes', JSON.stringify(notes));
+        refreshAll();
+      }
+    };
+
+    // NAV AUXILIAR
+    function initNav() {
+      const items = document.querySelectorAll('.nav-menu .nav-item');
+      const views = document.querySelectorAll('.view-section');
+
+      items.forEach(item => {
+        item.addEventListener('click', () => {
+          items.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+
+          const target = item.getAttribute('data-view');
+          views.forEach(v => {
+            if (v.id === target) v.classList.remove('hidden');
+            else v.classList.add('hidden');
+          });
+        });
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.innerText = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
