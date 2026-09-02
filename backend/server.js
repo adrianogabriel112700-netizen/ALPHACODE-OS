@@ -34,3 +34,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`[ALPHA CODE SYSTEM] Servidor rodando na porta ${PORT}`);
 });
+
+
+ const API_URL = 'https://alphacode-backend.onrender.com'; 
